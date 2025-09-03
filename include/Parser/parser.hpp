@@ -2,14 +2,14 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
-#include "lexer.hpp"
+#include "Lexer/LexerCore.hpp"
 
 class Parser {
   public:
-    Parser(Lexer& lexer) : lexer(lexer) {};
+    Parser(LexerCore& lexer) : lexer(lexer) {};
 
   private:
-    Lexer& lexer;
+    LexerCore& lexer;
 };
 
 #endif
