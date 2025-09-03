@@ -11,6 +11,7 @@ enum class TokenType : std::uint8_t {
     END
 };
 
+//class
 class Token {
     public:
         constexpr Token(TokenType type, std::string_view value) noexcept
