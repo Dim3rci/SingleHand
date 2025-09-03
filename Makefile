@@ -1,14 +1,14 @@
-# Compilateur et options
+# Compiler and options
 CXX := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -Iinclude
 
-# Dossiers
+# Directories
 SRC_DIR := src
 BUILD_DIR := build
 BIN_DIR := bin
 TARGET := $(BIN_DIR)/program
 
-# Compatible Windows : utilise 'powershell' ou 'dir'
+# Windows compatible: uses 'powershell' or 'dir'
 ifeq ($(OS),Windows_NT)
     SOURCES := $(shell powershell -Command "Get-ChildItem -Path $(SRC_DIR) -Recurse -Filter *.cpp | Select-Object -ExpandProperty FullName")
 else
@@ -17,10 +17,10 @@ endif
 
 OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
-# Règle par défaut
+# Default rule
 all: $(TARGET)
 
-# Lien des objets
+# Linking objects
 $(TARGET): $(OBJECTS) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
@@ -29,11 +29,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	@mkdir -p "$(@D)"
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Création des dossiers
+# Create directories
 $(BIN_DIR) $(BUILD_DIR):
 	@mkdir -p $@
 
-# Nettoyage
+# Clean
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
 

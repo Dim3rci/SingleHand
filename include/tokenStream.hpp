@@ -1,5 +1,4 @@
-#ifndef TOKEN_STREAM_HPP
-#define TOKEN_STREAM_HPP
+#pragma once
 
 #include "commonType.hpp"
 
@@ -18,5 +17,3 @@ class TokenStream {
         bool hasNext() const { return index < tokens.size(); }
         bool variableExist(const std::string& name, int pos);
 };
-
-#endif

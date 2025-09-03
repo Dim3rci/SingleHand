@@ -1,5 +1,4 @@
-#ifndef COMMON_TYPE_HPP
-#define COMMON_TYPE_HPP
+#pragma once
 
 #include <string>
 #include <stdexcept>
@@ -12,15 +11,13 @@
 
 enum TokenType { 
     VAR,       // 'v'
-    NUMBER,    // valeur numérique
+    NUMBER,    // Interger
     EGAL,      // #
     PLUS,      // '##'
-    END        // fin d'entrée
+    END        // end of input
 };  
 
 struct Token {
     TokenType type;
     std::string value;
 };
-
-#endif

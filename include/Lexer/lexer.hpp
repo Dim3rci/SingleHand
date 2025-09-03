@@ -1,5 +1,4 @@
-#ifndef LEXER_HPP
-#define LEXER_HPP
+#pragma once
 
 #include "commonType.hpp"
 
@@ -15,5 +14,3 @@ class Lexer {
       void skipWhitespace();
       std::optional<Token> nextToken();
 };
-
-#endif

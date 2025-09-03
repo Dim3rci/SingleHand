@@ -1,5 +1,4 @@
 #include "parser.hpp"
-#include "utils.hpp"
 
 std::string tokenTypeToString(TokenType type) {
     switch(type) {
@@ -11,7 +10,6 @@ std::string tokenTypeToString(TokenType type) {
     }
 }
 
-// Fonction pour afficher tous les tokens
 void printTokens(const std::vector<Token>& tokens) {
     std::cout << "Contenu des tokens (" << tokens.size() << " tokens):\n";
     std::cout << "--------------------------------\n";
@@ -26,7 +24,7 @@ void printTokens(const std::vector<Token>& tokens) {
 }
 
 int main() {
-    std::string input = utils::readFileToString("syntaxe.txt");
+    std::string_view input = "v x # 42 ## v y # 100 ## v z # x ## y ##";
 
     try {
         Lexer lexer(input);
