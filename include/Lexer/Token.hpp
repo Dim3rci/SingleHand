@@ -4,7 +4,7 @@
 #include <cstdint>
 
 enum class TokenType : std::uint8_t {
-    VAR,
+    IDENTIFIER,
     NUMBER,
     EQUAL,
     PLUS,

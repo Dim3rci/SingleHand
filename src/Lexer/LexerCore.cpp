@@ -1,15 +1,45 @@
-#include "Lexer/LexerCore.hpp"
 #include <stdexcept>
 #include <cctype>
+#include <iostream>
+#include <array>
+
+#include "Lexer/LexerCore.hpp"
 
 LexerCore::LexerCore(const std::string& filename) {
     input_ = Common::fileToString(filename);
     pos_ = 0;
 }
 
-void LexerCore::skipWhitespace() {
-    while (pos_ < input_.size() && std::isspace(static_cast<unsigned char>(input_[pos_])))
-        ++pos_;
+// Fast ASCII lookup tables for isalpha, isalnum, isdigit
+namespace {
+    constexpr auto make_alpha_table() {
+        std::array<bool, 256> t{};
+        for (int i = 0; i < 256; ++i)
+            t[i] = (i >= 'A' && i <= 'Z') || (i >= 'a' && i <= 'z') || (i == '_');
+        return t;
+    }
+    constexpr auto make_alnum_table() {
+        std::array<bool, 256> t{};
+        for (int i = 0; i < 256; ++i)
+            t[i] = (i >= 'A' && i <= 'Z') || (i >= 'a' && i <= 'z') || (i == '_')
+                   || (i >= '0' && i <= '9');
+        return t;
+    }
+    constexpr auto make_digit_table() {
+        std::array<bool, 256> t{};
+        for (int i = 0; i < 256; ++i)
+            t[i] = (i >= '0' && i <= '9');
+        return t;
+    }
+
+    constexpr auto is_alpha_table = make_alpha_table();
+    constexpr auto is_alnum_table = make_alnum_table();
+    constexpr auto is_digit_table = make_digit_table();
+
+    inline bool is_alpha(unsigned char c) { return is_alpha_table[c]; }
+    inline bool is_alnum(unsigned char c) { return is_alnum_table[c]; }
+    inline bool is_digit(unsigned char c) { return is_digit_table[c]; }
+    inline bool is_space(unsigned char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
 }
 
 std::string_view LexerCore::getInput() const {
@@ -17,48 +47,47 @@ std::string_view LexerCore::getInput() const {
 }
 
 std::optional<Token> LexerCore::nextToken() {
-    skipWhitespace();
+    const char* data = input_.data();
+    size_t size = input_.size();
+    size_t p = pos_;
 
-    if (pos_ >= input_.size()) {
-        return Token{TokenType::END, std::string_view("")};
+    // Skip whitespace (fast loop)
+    while (p < size && is_space(static_cast<unsigned char>(data[p]))) ++p;
+
+    if (p >= size) {
+        pos_ = p;
+        return Token{TokenType::END, std::string_view()};
     }
 
-    char c = input_[pos_];
+    unsigned char c = static_cast<unsigned char>(data[p]);
 
-    if (c == 'v') {
-        ++pos_;
-        if (pos_ >= input_.size() || !std::isspace(static_cast<unsigned char>(input_[pos_]))) {
-            throw std::runtime_error("Expected space after 'v'");
-        }
-        ++pos_; // skip space
-        size_t start = pos_;
-        while (pos_ < input_.size() && !std::isspace(static_cast<unsigned char>(input_[pos_]))) {
-            ++pos_;
-        }
-        if (start == pos_) {
-            throw std::runtime_error("Missing identifier after 'v '");
-        }
-        std::string_view val(input_.data() + start, pos_ - start);
-        return Token{TokenType::VAR, val};
+    // Identifier (variable or keyword)
+    if (is_alpha(c)) {
+        size_t start = p;
+        do { ++p; } while (p < size && is_alnum(static_cast<unsigned char>(data[p])));
+        pos_ = p;
+        return Token{TokenType::IDENTIFIER, std::string_view(data + start, p - start)};
     }
 
-    if (std::isdigit(static_cast<unsigned char>(c))) {
-        size_t start = pos_;
-        while (pos_ < input_.size() && std::isdigit(static_cast<unsigned char>(input_[pos_]))) {
-            ++pos_;
-        }
-        std::string_view val(input_.data() + start, pos_ - start);
-        return Token{TokenType::NUMBER, val};
+    // Number
+    if (is_digit(c)) {
+        size_t start = p;
+        do { ++p; } while (p < size && is_digit(static_cast<unsigned char>(data[p])));
+        pos_ = p;
+        return Token{TokenType::NUMBER, std::string_view(data + start, p - start)};
     }
 
+    // Operators + and =
     if (c == '#') {
-        if (pos_ + 1 < input_.size() && input_[pos_ + 1] == '#') {
-            pos_ += 2;
+        if (p + 1 < size && data[p + 1] == '#') {
+            pos_ = p + 2;
             return Token{TokenType::PLUS, std::string_view("+")};
         }
-        ++pos_;
+        pos_ = p + 1;
         return Token{TokenType::EQUAL, std::string_view("=")};
     }
 
-    throw std::runtime_error(std::string("Unexpected character: ") + c);
+    // ...add more operators/symbols as needed...
+
+    throw std::runtime_error(std::string("Unexpected character: ") + static_cast<char>(c));
 }
