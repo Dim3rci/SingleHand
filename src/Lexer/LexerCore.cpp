@@ -8,6 +8,9 @@
 #include "Lexer/LexerCore.hpp"
 #include "Error/Error.hpp"
 
+/**
+ * @brief Constructs a LexerCore object from a file.
+ */
 LexerCore::LexerCore(const std::string& filename) {
     filename_ = filename;
     input_ = Common::fileToString(filename);
@@ -49,14 +52,23 @@ namespace {
 }
 
 std::string_view LexerCore::getInput() const {
+    /**
+     * @brief Returns the input string.
+     */
     return input_;
 }
 
 std::pair<int, int> LexerCore::getCurrentPos() const {
+    /**
+     * @brief Gets the current line and column position.
+     */
     return {line_, column_};
 }
 
 void LexerCore::skipWhitespace(const char* data, size_t size, size_t& p, int& line, int& column) {
+    /**
+     * @brief Skips whitespace characters in the input.
+     */
     while (p < size) {
         unsigned char c = static_cast<unsigned char>(data[p]);
         if (c == ' ' || c == '\t') {
@@ -73,6 +85,9 @@ void LexerCore::skipWhitespace(const char* data, size_t size, size_t& p, int& li
 }
 
 Token LexerCore::lexIdentifier(const char* data, size_t size, size_t& p, int& line, int& column) {
+    /**
+     * @brief Lexes an identifier token.
+     */
     size_t start = p;
 
     ++p; ++column;  // we know data[start] is alpha or '_'
@@ -83,6 +98,9 @@ Token LexerCore::lexIdentifier(const char* data, size_t size, size_t& p, int& li
 }
 
 Token LexerCore::lexNumber(const char* data, size_t size, size_t& p, int& line, int& column) {
+    /**
+     * @brief Lexes a number token.
+     */
     size_t start = p;
 
     ++p; ++column;  // we know data[start] is digit
@@ -93,6 +111,9 @@ Token LexerCore::lexNumber(const char* data, size_t size, size_t& p, int& line, 
 }
 
 std::optional<Token> LexerCore::lexOperator(const char* data, size_t size, size_t& p, int& line, int& column) {
+    /**
+     * @brief Lexes an operator token.
+     */
     unsigned char c = static_cast<unsigned char>(data[p]);
 
     if (c == '#') {
@@ -107,6 +128,9 @@ std::optional<Token> LexerCore::lexOperator(const char* data, size_t size, size_
 }
 
 std::optional<Token> LexerCore::nextToken() {
+    /**
+     * @brief Returns the next token from the input.
+     */
     const char* data   = input_.data();
     size_t      size   = input_.size();
     size_t      p      = pos_;

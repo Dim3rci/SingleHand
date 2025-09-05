@@ -1,11 +1,15 @@
 #include "Lexer/TokenStream.hpp"
 #include <stdexcept>
 
-// Constructor initializes lexer_ with the file, buffer_ empty
+/**
+ * @brief Constructor initializes lexer_ with the file, buffer_ empty.
+ */
 TokenStream::TokenStream(const std::string& filename)
     : lexer_(filename), buffer_(std::nullopt) {}
 
-// If buffer_ is empty, fetch the next token from lexer_
+/**
+ * @brief If buffer_ is empty, fetch the next token from lexer_.
+ */
 void TokenStream::fillBuffer() {
     if (!buffer_) {
         auto tokOpt = lexer_.nextToken();
@@ -18,6 +22,9 @@ void TokenStream::fillBuffer() {
     }
 }
 
+/**
+ * @brief Consume and return the next token.
+ */
 Token TokenStream::next() {
     fillBuffer();
     Token current = std::move(*buffer_);
@@ -25,6 +32,9 @@ Token TokenStream::next() {
     return current;
 }
 
+/**
+ * @brief True if there are more tokens (END not yet reached).
+ */
 bool TokenStream::hasNext() {
     fillBuffer();
     return buffer_->getType() != TokenType::END;

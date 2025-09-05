@@ -5,19 +5,33 @@
 #include <string>
 #include <string_view>
 
+/**
+ * @brief Stream interface for consuming tokens from a lexer.
+ */
 class TokenStream {
 public:
-    // Construct by filename; lexer_ reads and holds the entire input
+    /**
+     * @brief Constructs a TokenStream from a filename.
+     * @param filename Name of the file to tokenize.
+     */
     explicit TokenStream(const std::string& filename);
 
-    // Consume and return the next token
+    /**
+     * @brief Consume and return the next token.
+     * @return Next token.
+     */
     Token next();
 
-    // True if there are more tokens (END not yet reached)
+    /**
+     * @brief Checks if there are more tokens (END not yet reached).
+     * @return True if more tokens are available.
+     */
     bool hasNext();
 
 private:
-    // Fill buffer_ if empty
+    /**
+     * @brief Fills the buffer with the next token if empty.
+     */
     void fillBuffer();
 
     LexerCore            lexer_;
