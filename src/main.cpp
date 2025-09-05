@@ -1,43 +1,37 @@
-#include "parser.hpp"
+#include <iostream>
+#include <string>
 
-std::string tokenTypeToString(TokenType type) {
-    switch(type) {
-        case TokenType::VAR: return "VAR";
+#include "Lexer/LexerCore.hpp"
+#include "Lexer/TokenStream.hpp"
+#include "Utils/Common.hpp"
+#include "Error/Error.hpp"
+
+// helper to stringify token types
+static std::string tokenTypeToString(TokenType type) {
+    switch (type) {
+        case TokenType::IDENTIFIER:    return "IDENTIFIER";
         case TokenType::NUMBER: return "NUMBER";
-        case TokenType::END: return "END";
-        case TokenType::PLUS: return "PLUS";
-        default: return "UNKNOWN";
+        case TokenType::EQUAL:  return "EQUAL";
+        case TokenType::PLUS:   return "PLUS";
+        case TokenType::END:    return "END";
     }
+    return "UNKNOWN";
 }
 
-void printTokens(const std::vector<Token>& tokens) {
-    std::cout << "Contenu des tokens (" << tokens.size() << " tokens):\n";
-    std::cout << "--------------------------------\n";
-    
-    for(size_t i = 0; i < tokens.size(); ++i) {
-        const Token& token = tokens[i];
-        std::cout << "Token " << i + 1 << ":\n";
-        std::cout << "  Type: " << tokenTypeToString(token.type) << "\n";
-        std::cout << "  Valeur: '" << token.value << "'\n";
-        std::cout << "--------------------------------\n";
-    }
-}
-
-int main() {
-    std::string_view input = "v x # 42 ## v y # 100 ## v z # x ## y ##";
+int main(int argc, char* argv[]) {
+    std::string filename = (argc > 1 ? argv[1] : "syntaxe.txt");
 
     try {
-        Lexer lexer(input);
-        while (auto token = lexer.nextToken()) {
-            std::cout << "Token: " << token->type << ", Value: " << token->value << "\n";
-            if (token->type == TokenType::END) {
-                break;
-            }
+        TokenStream ts(filename);
+        while (ts.hasNext()) {
+            Token tok = ts.next();
+            std::cout 
+                << tokenTypeToString(tok.getType()) 
+                << ": '" << tok.getValue() << "'\n";
         }
-        Parser parser(lexer);
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (const Error& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+        return 1;
     }
-
     return 0;
 }

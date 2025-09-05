@@ -1,4 +1,6 @@
 /.vscode
 /bin
+/docs
 /build
 *.txt
+*.exe

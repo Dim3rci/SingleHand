@@ -1,40 +1,32 @@
-# Compiler and options
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra -Iinclude
+CXXFLAGS := -std=c++17 -Wall -Iinclude 
 
-# Directories
 SRC_DIR := src
 BUILD_DIR := build
-BIN_DIR := bin
-TARGET := $(BIN_DIR)/program
+TARGET := singleHand.exe
 
-# Windows compatible: uses 'powershell' or 'dir'
-ifeq ($(OS),Windows_NT)
-    SOURCES := $(shell powershell -Command "Get-ChildItem -Path $(SRC_DIR) -Recurse -Filter *.cpp | Select-Object -ExpandProperty FullName")
-else
-    SOURCES := $(shell find $(SRC_DIR) -name "*.cpp")
-endif
+# Find all .cpp files in src/ and subdirectories
+SRCS := $(shell find $(SRC_DIR) -name '*.cpp')
+OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 
-OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
-
-# Default rule
+# Default target
 all: $(TARGET)
 
-# Linking objects
-$(TARGET): $(OBJECTS) | $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+# Link all object files
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-# Compilation
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	@mkdir -p "$(@D)"
+# Compile .cpp to .o
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Create directories
-$(BIN_DIR) $(BUILD_DIR):
-	@mkdir -p $@
+# Run the program
+run: all
+	./$(TARGET)
 
-# Clean
+# Clean build files
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR)
+	rm -rf $(BUILD_DIR) $(TARGET)
 
 .PHONY: all clean
