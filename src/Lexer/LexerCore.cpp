@@ -51,24 +51,24 @@ namespace {
     inline bool is_space(unsigned char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
 }
 
+/**
+ * @brief Returns the input string.
+ */
 std::string_view LexerCore::getInput() const {
-    /**
-     * @brief Returns the input string.
-     */
     return input_;
 }
 
+/**
+ * @brief Gets the current line and column position.
+ */
 std::pair<int, int> LexerCore::getCurrentPos() const {
-    /**
-     * @brief Gets the current line and column position.
-     */
     return {line_, column_};
 }
 
+/**
+ * @brief Skips whitespace characters in the input.
+ */
 void LexerCore::skipWhitespace(const char* data, size_t size, size_t& p, int& line, int& column) {
-    /**
-     * @brief Skips whitespace characters in the input.
-     */
     while (p < size) {
         unsigned char c = static_cast<unsigned char>(data[p]);
         if (c == ' ' || c == '\t') {
@@ -84,10 +84,10 @@ void LexerCore::skipWhitespace(const char* data, size_t size, size_t& p, int& li
     }
 }
 
+/**
+ * @brief Lexes an identifier token.
+ */
 Token LexerCore::lexIdentifier(const char* data, size_t size, size_t& p, int& line, int& column) {
-    /**
-     * @brief Lexes an identifier token.
-     */
     size_t start = p;
 
     ++p; ++column;  // we know data[start] is alpha or '_'
@@ -97,10 +97,10 @@ Token LexerCore::lexIdentifier(const char* data, size_t size, size_t& p, int& li
     return Token{TokenType::IDENTIFIER, std::string_view(data + start, p - start)};
 }
 
+/**
+ * @brief Lexes a number token.
+ */
 Token LexerCore::lexNumber(const char* data, size_t size, size_t& p, int& line, int& column) {
-    /**
-     * @brief Lexes a number token.
-     */
     size_t start = p;
 
     ++p; ++column;  // we know data[start] is digit
@@ -110,10 +110,10 @@ Token LexerCore::lexNumber(const char* data, size_t size, size_t& p, int& line, 
     return Token{TokenType::NUMBER, std::string_view(data + start, p - start)};
 }
 
+/**
+ * @brief Lexes an operator token.
+ */
 std::optional<Token> LexerCore::lexOperator(const char* data, size_t size, size_t& p, int& line, int& column) {
-    /**
-     * @brief Lexes an operator token.
-     */
     unsigned char c = static_cast<unsigned char>(data[p]);
 
     if (c == '#') {
@@ -127,10 +127,10 @@ std::optional<Token> LexerCore::lexOperator(const char* data, size_t size, size_
     return std::nullopt;
 }
 
+/**
+ * @brief Returns the next token from the input.
+ */
 std::optional<Token> LexerCore::nextToken() {
-    /**
-     * @brief Returns the next token from the input.
-     */
     const char* data   = input_.data();
     size_t      size   = input_.size();
     size_t      p      = pos_;
