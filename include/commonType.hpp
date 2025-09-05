@@ -18,6 +18,6 @@ enum TokenType {
 };  
 
 struct Token {
-    TokenType type;
+    TokenType   type;
     std::string value;
 };

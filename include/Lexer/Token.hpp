@@ -21,6 +21,6 @@ class Token {
         constexpr const std::string_view& getValue() const noexcept { return value_; }
 
     private:
-        TokenType type_;
-        std::string_view value_;
+    TokenType        type_;
+    std::string_view value_;
 };

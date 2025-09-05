@@ -20,7 +20,7 @@ static std::string tokenTypeToString(TokenType type) {
 
 int main(int argc, char* argv[]) {
     std::string filename = (argc > 1 ? argv[1] : "syntaxe.txt");
-    // LexerCore lexer(filename);
+
     try {
         TokenStream ts(filename);
         while (ts.hasNext()) {

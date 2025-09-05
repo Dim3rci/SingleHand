@@ -14,6 +14,17 @@ class LexerCore {
         std::optional<Token> nextToken();
         
     private:
+        std::string filename_;
         std::string input_;
-        size_t pos_;
+        size_t      pos_;
+        int         line_;
+        int         column_;
+
+        // Helper method to get current position info
+        std::pair<int, int> getCurrentPos() const;
+
+        void skipWhitespace(const char* data, size_t size, size_t& p, int& line, int& column);
+        Token lexIdentifier(const char* data, size_t size, size_t& p, int& line, int& column);
+        Token lexNumber    (const char* data, size_t size, size_t& p, int& line, int& column);
+        std::optional<Token> lexOperator(const char* data, size_t size, size_t& p, int& line, int& column);
 };

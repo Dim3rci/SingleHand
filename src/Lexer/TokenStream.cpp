@@ -18,11 +18,6 @@ void TokenStream::fillBuffer() {
     }
 }
 
-const Token& TokenStream::peek() {
-    fillBuffer();
-    return *buffer_;
-}
-
 Token TokenStream::next() {
     fillBuffer();
     Token current = std::move(*buffer_);

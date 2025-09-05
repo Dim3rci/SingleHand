@@ -10,9 +10,6 @@ public:
     // Construct by filename; lexer_ reads and holds the entire input
     explicit TokenStream(const std::string& filename);
 
-    // Look at next token without consuming
-    [[nodiscard]] const Token& peek();
-
     // Consume and return the next token
     Token next();
 
@@ -23,6 +20,6 @@ private:
     // Fill buffer_ if empty
     void fillBuffer();
 
-    LexerCore lexer_;
+    LexerCore            lexer_;
     std::optional<Token> buffer_;
 };
